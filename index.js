@@ -1,16 +1,17 @@
+const express = require("express");
+const { Accelerometer, Board } = require("johnny-five");
+const socket = require("socket.io");
+
 let fullData = [];
 
-const express = require("express");
-
 const app = express();
+const board = new Board();
 const server = app.listen(3000, () => {
     console.log("listening at 3000");
 });
-app.use(express.static("public"));
-
-const socket = require("socket.io");
-
 const io = socket(server);
+
+app.use(express.static("public"));
 
 io.sockets.on('connection', (socket) => {
     console.log("new connection: " + socket.id);
@@ -19,9 +20,6 @@ io.sockets.on('connection', (socket) => {
         socket.emit('start', fullData);
     });
 });
-
-const { Accelerometer, Board } = require("johnny-five");
-const board = new Board();
 
 board.on("ready", () => {
     const accelerometer = new Accelerometer({
